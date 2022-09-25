@@ -54,6 +54,10 @@
     width: 100%;
     position: absolute;
     bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
 .btn-cart:hover{
