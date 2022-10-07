@@ -14,6 +14,23 @@
     background-color: rgba(255, 153, 0, 0.3);
 }
 
+.btn-review-order{
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    width: 100%;
+    background-color: #FF9900;
+    color: white;
+    font-size: 17px;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.review-order-link{
+    text-decoration: none;
+}
+
 @media screen and (max-width:1100px) {
     .products-container{
         grid-template-columns: repeat(2, 1fr);
