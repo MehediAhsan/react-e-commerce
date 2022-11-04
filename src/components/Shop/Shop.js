@@ -3,7 +3,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { addToDb, deleteShoppingCart, getStoredCart } from '../../utilities/fakedb';
 import Cart from '../Cart/Cart';
 import Product from '../Product/Product';
@@ -35,15 +35,26 @@ const Shop = () => {
     useEffect( () => {
         const storedCart = getStoredCart();
         const savedCart = [];
-        for(const id in storedCart){
-            const addedProduct = products.find(product => product._id === id)
-            if(addedProduct){
-                const quantity = storedCart[id];
-                addedProduct.quantity = quantity;
-                savedCart.push(addedProduct)
+        const ids = Object.keys(storedCart);
+        fetch('http://localhost:5000/productsByIds', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(ids)
+        })
+        .then(res => res.json())
+        .then(data => {
+            for(const id in storedCart){
+                const addedProduct = data.find(product => product._id === id)
+                if(addedProduct){
+                    const quantity = storedCart[id];
+                    addedProduct.quantity = quantity;
+                    savedCart.push(addedProduct)
+                }
             }
-        }
-        setCart(savedCart);
+            setCart(savedCart);
+        })
     }, [products])
 
     const handleAddToCart = (selectedProduct) => {
@@ -81,18 +92,20 @@ const Shop = () => {
             </div>
             <div className="pagination">
                 <p>Currently selected page: {page} and size: {size}</p>
+                <button onClick={() => {page > 0 && setPage(page-1)}}>{"<"}</button>
                 {
                     [...Array(pages).keys()].map(number => <button
                         key={number}
-                        className={page === number && 'selected'}
+                        className={page === number ? 'selected': ''}
                         onClick={() => setPage(number)}
                     >
-                        {number}
+                        {number + 1}
                     </button>)
                 }
-                <select onChange={event => setSize(event.target.value)}>
+                <button onClick={() => {Array(pages).length - 1 > page && setPage(page+1)}}>{">"}</button>
+                <select onChange={event => setSize(event.target.value)} defaultValue={size}>
                     <option value="5">5</option>
-                    <option value="10" selected>10</option>
+                    <option value="10">10</option>
                     <option value="15">15</option>
                     <option value="20">20</option>
                 </select>
